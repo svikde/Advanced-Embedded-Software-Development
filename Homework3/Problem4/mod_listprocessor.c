@@ -29,6 +29,8 @@ static char *animal_type = "";			//Accepts data from user to filter data on the 
 static int count_greater_than = 0;		//Accepts data from user to filter data on the basis of thier occurance
 static int animal_count = 0;			//Length of seed array
 
+int uniquecount = 0 , filtercount = 0;
+
 /* Module Parameter setup and descriptions */
 module_param_array(animals, charp, &animal_count, S_IRUSR | S_IWUSR);
 MODULE_PARM_DESC(animals, "List of Animals");
@@ -58,7 +60,7 @@ LIST_HEAD(my_filter_list);
  * external access.  */
 static int __init animalfilter_init(void)
 {
-	int i = 0, j = 0, count = 0, uniquecount = 0 , filtercount = 0;
+	int i = 0, j = 0, count = 0;
 	char temp[12];
 	struct animal_data_struct *animalobj = NULL;	
 
@@ -192,6 +194,8 @@ static void __exit animalfilter_exit(void)
     		list_del(position);
     		kfree(tmp);
   	}
+	printk(KERN_ALERT "Freed %ldbytes of Memory allocated to the unique list",sizeof(struct animal_data_struct) * uniquecount);
+	printk(KERN_ALERT "Freed %ldbytes of Memory allocated to the filtered list",sizeof(struct animal_data_struct) * filtercount);
 
 	printk(KERN_ALERT "Module Removed Successfully");
 }
