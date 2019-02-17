@@ -24,10 +24,10 @@ MODULE_LICENSE("GPL");				//License
 MODULE_DESCRIPTION("Animal Filter");		//Module Description
 MODULE_AUTHOR("Souvik De");			//Author
 
-static char *animals[50];			//Holds seed data from user
-static char *animal_type = "";			//Animal type filter
-static int count_greater_than = 0;		//Count greater than filter
-static int animal_count = 0;			//Length of seed arry
+static char *animals[50];			//Accepts seed data from user
+static char *animal_type = "";			//Accepts data from user to filter data on the basis of animal type
+static int count_greater_than = 0;		//Accepts data from user to filter data on the basis of thier occurance
+static int animal_count = 0;			//Length of seed array
 
 /* Module Parameter setup and descriptions */
 module_param_array(animals, charp, &animal_count, S_IRUSR | S_IWUSR);
@@ -52,6 +52,10 @@ struct animal_data_struct
 LIST_HEAD(my_unique_list);
 LIST_HEAD(my_filter_list);
 
+/* This is invoked when this module is inserted into the kernel
+ * It serves as an entry point to the module. Entry and exit
+ * functions in modules are typically defined static to res-
+ * external access.  */
 static int __init animalfilter_init(void)
 {
 	int i = 0, j = 0, count = 0, uniquecount = 0 , filtercount = 0;
@@ -85,6 +89,7 @@ static int __init animalfilter_init(void)
 	
 	printk(KERN_ALERT "Processing in linked list");
 	printk(KERN_ALERT "Unique Collection");
+
 	/* Remove dplicate items and count occurances of each entry */
 	for(i = 0 ; i < animal_count ; i++)
 	{
@@ -94,69 +99,84 @@ static int __init animalfilter_init(void)
 			if((strcmp(animals[i],animals[j]) == 0) && (strcmp(animals[i],"") != 0))
 			{
 				count++;
+				/* Check if a particular animal occurs more than once and then remove duplicates */
 				if(count > 1)
 					strcpy(animals[j],"");
 			}
 		}
-
 		if(count > 0)
 		{
-			uniquecount++;		//Get No of items in the unique list
-			/* Allocate nodes and check for failure */
+			/* Process Unique items and their count in linked list */
+			uniquecount++;					//No of nodes in the unique list
+			/* Attempt to allocate nodes and check for failure */
 			animalobj = (struct animal_data_struct *)kmalloc(sizeof(struct animal_data_struct), GFP_KERNEL);
 			if(animalobj == NULL)
 				return 0;
 	
 			animalobj->animal = animals[i];
 			animalobj->count = count;
-			if(count > 1)
-				printk(KERN_ALERT "%s\t - %d times (Duplicate)",animals[i],count);	//Print Duplicate items
-			else	
-				printk(KERN_ALERT "%s\t - %d time",animals[i],count);			//Print Unique items
-			list_add(&animalobj->unique_list, &my_unique_list );				//Append Unique list	
 
+			/* To Identify items that had multiple occurances */
+			if(count > 1)
+				printk(KERN_ALERT "%s\t - %d times (Duplicates Removed)",animals[i],count);
+			else	
+				printk(KERN_ALERT "%s\t - %d time",animals[i],count);			
+			list_add(&animalobj->unique_list, &my_unique_list );					
+
+			/* Process data in filtered list */
+			/* If animal type and count is defined */
 			if(strcmp(animal_type,"") != 0)
 			{
 				if((strcmp(animalobj->animal,animal_type) == 0 ) && (animalobj->count > count_greater_than))
 				{
-					list_add(&animalobj->filter_list, &my_filter_list );
-					filtercount++;
+					list_add(&animalobj->filter_list, &my_filter_list );		//Add to filtered list
+					filtercount++;							//Track No. of nodes on the filtered list
 				}
 			}
 			else
 			{
+			/* If animal type filter is not defined */
 				if(count_greater_than > 0)
 				{
+					/* If only count greater than filter is defined */
 					if(animalobj->count > count_greater_than)
 					{
-						list_add(&animalobj->filter_list, &my_filter_list );
-						filtercount++;
+						list_add(&animalobj->filter_list, &my_filter_list );	//Add to filtered list
+						filtercount++;						//Track No. of nodes on the filtered list
 					}
 				}
 				else
 				{
-					list_add(&animalobj->filter_list, &my_filter_list );	
-					filtercount++;
+					/* With no filters applied */
+					list_add(&animalobj->filter_list, &my_filter_list );		//Add to filtered list	
+					filtercount++;							//Track No. of nodes on the filtered list
 				}	
 			}
 		}
 	}
 
-	printk(KERN_ALERT "Number of nodes in unique list: %d",uniquecount);
-	printk(KERN_ALERT "Memory allocated for unique list: %ld bytes",sizeof(struct animal_data_struct) * uniquecount);
-	printk(KERN_ALERT "Number of nodes in filtered list: %d",filtercount);
-	printk(KERN_ALERT "Memory allocated for filtered list: %ld bytes",sizeof(struct animal_data_struct) * filtercount);
+	printk(KERN_ALERT "Number of nodes in unique list: %d",uniquecount);	//Number of nodes in the unique list
+	printk(KERN_ALERT "Memory allocated for unique list: %ld bytes",sizeof(struct animal_data_struct) * uniquecount);	//Memory allocated for unique list
+	printk(KERN_ALERT "Number of nodes in filtered list: %d",filtercount);	//Number of nodes in the filtered list
+	printk(KERN_ALERT "Memory allocated for filtered list: %ld bytes",sizeof(struct animal_data_struct) * filtercount);	//Memory allocated for filtered list
 
 	return 0;
 }
 
+/* This is invoked when this module is removed from the kernel
+ * It serves as an exit point from the module. Entry and exit
+ * functions in modules are typically defined static to res-
+ * external access.  */
 static void __exit animalfilter_exit(void)
 {
 	struct list_head *position, *q;
   	struct animal_data_struct *animal_obj;
 
 	printk(KERN_ALERT "Filtered Collection");
+	/* Display filter type applied */
 	printk(KERN_ALERT "Search criteria: Animal Type=%s | Count greater than=%d",animal_type,count_greater_than);
+
+	/*Traverse filtered list and print entries*/
   	list_for_each(position, &my_filter_list )
 	{
     		animal_obj = list_entry(position, struct animal_data_struct, filter_list );
@@ -164,6 +184,7 @@ static void __exit animalfilter_exit(void)
   	}
 	
 	printk(KERN_ALERT "Freeing Data Structure");
+	/* Free allocated memory */
   	list_for_each_safe(position, q, &my_unique_list )
 	{
     		struct animal_data_struct *tmp;
@@ -176,5 +197,5 @@ static void __exit animalfilter_exit(void)
 }
 
 
-module_init(animalfilter_init);
-module_exit(animalfilter_exit);
+module_init(animalfilter_init);	//Register Module Entry Point
+module_exit(animalfilter_exit);	//Register Module Exit Point
