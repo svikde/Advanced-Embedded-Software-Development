@@ -1,0 +1,43 @@
+[1551332154.841389] IPC Method = Sockets (starting) 
+[1551332154.841511] Server side socket fd = 3 
+[1551332169.552132] client side socket fd = 3 
+[1551332169.552260] Client Sending : message = 1 Hello there !   - from client ( PID =  9647 ), led_control = 1 
+[1551332169.552325] Server Receiving : message = 1 Hello there !   - from client ( PID =  9647 ), led_control = 1 
+[1551332169.552373] Server Sending : message = 1 Hi there !  - from server ( PID =  9645 ), led_control = 1 
+[1551332169.552458] Client Receiving : message = 1 Hi there !  - from server ( PID =  9645 ), led_control = 1 
+[1551332169.552531] Client Sending : message = 2 I'm clearing LED  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.552608] Server Receiving : message = 2 I'm clearing LED  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.552645] Server Sending : message = 2 Cool, I'm fine with that.  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.552770] Client Receiving : message = 2 Cool, I'm fine with that.  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.552811] Client Sending : message = 3 So, how is it going ?  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.552849] Server Receiving : message = 3 So, how is it going ?  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.552881] Server Sending : message = 3 Very well...I was testing IPC.  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.553040] Client Receiving : message = 3 Very well...I was testing IPC.  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.553086] Client Sending : message = 4 Do you want to toggle the LED ?  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.553139] Server Receiving : message = 4 Do you want to toggle the LED ?  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.553184] Server Sending : message = 4 Nah..not now.  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.553327] Client Receiving : message = 4 Nah..not now.  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.553367] Client Sending : message = 5 What is your favourite IPC method ?  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.553406] Server Receiving : message = 5 What is your favourite IPC method ?  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.553436] Server Sending : message = 5 Duhh...Pipes  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.553605] Client Receiving : message = 5 Duhh...Pipes  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.553650] Client Sending : message = 6 one, testing  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.553680] Server Receiving : message = 6 one, testing  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.553709] Server Sending : message = 6 Sure, one it is  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.553860] Client Receiving : message = 6 Sure, one it is  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.553900] Client Sending : message = 7 Two  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.553941] Server Receiving : message = 7 Two  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.553971] Server Sending : message = 7 Two received  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.554130] Client Receiving : message = 7 Two received  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.554170] Client Sending : message = 8 Three  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.554208] Server Receiving : message = 8 Three  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.554238] Server Sending : message = 8 Like the musketeers, three !  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.554380] Client Receiving : message = 8 Like the musketeers, three !  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.554420] Client Sending : message = 9 Four  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.554466] Server Receiving : message = 9 Four  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.554515] Server Sending : message = 9 Yes yes four  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.554660] Client Receiving : message = 9 Yes yes four  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.554710] Client Sending : message = 10 Lets set the led  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.554739] Server Receiving : message = 10 Lets set the led  - from client ( PID =  9647 ), led_control = 0 
+[1551332169.554776] Server Sending : message = 10 Cool, set LED received  - from server ( PID =  9645 ), led_control = 0 
+[1551332169.555032] Client Receiving : message = 10 Cool, set LED received  - from server ( PID =  9645 ), led_control = 0 

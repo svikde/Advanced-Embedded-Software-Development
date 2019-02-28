@@ -1,0 +1,43 @@
+[1551370163.100476] IPC Method = Message Queues (starting) 
+[1551370163.100580] Process-2 File Descriptor = 3 
+[1551370166.409614] Process-1 File Descriptor = 3 
+[1551370166.409647] Process-1 Sending : message = 1 Hello there !   - from Process1 ( PID =  10055 ), led_control = 1 
+[1551370166.409669] Process-2 Receving : message = 1 Hello there !   - from Process1 ( PID =  10055 ), led_control = 1 
+[1551370166.409684] Process-2 Sending : message = 1 Hi there !  - from Process2 ( PID =  10054 ), led_control = 1 
+[1551370166.409700] Process-1 Receving : message = 1 Hi there !  - from Process2 ( PID =  10054 ), led_control = 1 
+[1551370166.409717] Process-1 Sending : message = 2 I'm clearing LED  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.409729] Process-2 Receving : message = 2 I'm clearing LED  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.409740] Process-2 Sending : message = 2 Cool, I'm fine with that.  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.409819] Process-1 Receving : message = 2 Cool, I'm fine with that.  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.409853] Process-1 Sending : message = 3 So, how is it going ?  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.409891] Process-2 Receving : message = 3 So, how is it going ?  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.409909] Process-2 Sending : message = 3 Very well...I was testing IPC.  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410139] Process-1 Receving : message = 3 Very well...I was testing IPC.  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410156] Process-1 Sending : message = 4 Do you want to toggle the LED ?  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410170] Process-2 Receving : message = 4 Do you want to toggle the LED ?  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410181] Process-2 Sending : message = 4 Nah..not now.  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410259] Process-1 Receving : message = 4 Nah..not now.  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410277] Process-1 Sending : message = 5 What is your favourite IPC method ?  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410291] Process-2 Receving : message = 5 What is your favourite IPC method ?  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410302] Process-2 Sending : message = 5 Duhh...Pipes  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410372] Process-1 Receving : message = 5 Duhh...Pipes  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410408] Process-1 Sending : message = 6 one, testing  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410423] Process-2 Receving : message = 6 one, testing  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410437] Process-2 Sending : message = 6 Sure, one it is  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410591] Process-1 Receving : message = 6 Sure, one it is  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410611] Process-1 Sending : message = 7 Two  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410625] Process-2 Receving : message = 7 Two  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410635] Process-2 Sending : message = 7 Two received  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410706] Process-1 Receving : message = 7 Two received  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410725] Process-1 Sending : message = 8 Three  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410738] Process-2 Receving : message = 8 Three  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410749] Process-2 Sending : message = 8 Like the musketeers, three !  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410875] Process-1 Receving : message = 8 Like the musketeers, three !  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.410907] Process-1 Sending : message = 9 Four  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410970] Process-2 Receving : message = 9 Four  - from Process1 ( PID =  10055 ), led_control = 0 
+[1551370166.410982] Process-2 Sending : message = 9 Yes yes four  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.411132] Process-1 Receving : message = 9 Yes yes four  - from Process2 ( PID =  10054 ), led_control = 0 
+[1551370166.411152] Process-1 Sending : message = 10 Lets set the led  - from Process1 ( PID =  10055 ), led_control = 1 
+[1551370166.411165] Process-2 Receving : message = 10 Lets set the led  - from Process1 ( PID =  10055 ), led_control = 1 
+[1551370166.411175] Process-2 Sending : message = 10 Cool, set LED received  - from Process2 ( PID =  10054 ), led_control = 1 
+[1551370166.411988] Process-1 Receving : message = 10 Cool, set LED received  - from Process2 ( PID =  10054 ), led_control = 1 

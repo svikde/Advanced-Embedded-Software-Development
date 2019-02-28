@@ -43,7 +43,7 @@ char *messagelookup[] = {
 	"Cool, set LED received"
 };
 
-void write_log(int IsFileCreated, char *status, mesg_t *message)
+void write_log(int IsFileCreated, int IsJustMessage, char *status, mesg_t *message)
 {
 	struct timeval Now;
 
@@ -69,7 +69,10 @@ void write_log(int IsFileCreated, char *status, mesg_t *message)
 	}
 
 	gettimeofday(&Now,NULL);
-	fprintf(log_file_ptr, "[%lu.%06lu] %s : message = %s, led_control = %d \n", Now.tv_sec,Now.tv_usec,status,message->string,message->led_control);
+	if(IsJustMessage)
+		fprintf(log_file_ptr, "[%lu.%06lu] %s \n", Now.tv_sec,Now.tv_usec,status);	
+	else
+		fprintf(log_file_ptr, "[%lu.%06lu] %s : message = %s, led_control = %d \n", Now.tv_sec,Now.tv_usec,status,message->string,message->led_control);
 
 	fclose(log_file_ptr);
 }
@@ -86,6 +89,8 @@ int main()
 	mesg_t message;
 	mesg_t *msgptr;
 	
+	write_log(0,1,"IPC Method = Sockets (starting)",NULL);
+
 	/*Creating a socket file descriptor*/
 	server_FD = socket(AF_INET, SOCK_STREAM, 0);
 	if(server_FD == 0)
@@ -96,6 +101,8 @@ int main()
 	else
 	{
 		printf("Socket created successfully \n");
+		sprintf(str,"Server side socket fd = %d",server_FD);
+		write_log(1,1,str,NULL);
 		
 	}
 
@@ -142,16 +149,16 @@ int main()
 
 	   	read( new_socket_FD , msgptr, sizeof(mesg_t));
 	   	printf("%s with led control=%d\n",msgptr->string, msgptr->led_control);
-	   	write_log(1,"Server Receiving",msgptr);
+	   	write_log(1,0,"Server Receiving",msgptr);
 
 	   	sprintf(str, "%d %s %s %d %s",j+1 , messagelookup[j+10]," - from server ( PID = ",getpid(), ")");
 		strcpy(message.string, str);
 		message.length = strlen(message.string);
-		if(j < 1)
+		if(j < 1 || j > 8)
 			message.led_control=LED_ON;
 
 	   	send(new_socket_FD , (void *)&message , sizeof(mesg_t) , 0 );
-	   	write_log(1,"Server Sending",msgptr);
+	   	write_log(1,0,"Server Sending",msgptr);
     }
 
    	return 0;

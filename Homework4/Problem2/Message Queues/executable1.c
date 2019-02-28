@@ -1,13 +1,16 @@
+#include<fcntl.h> 
+#include<sys/stat.h>
+#include<mqueue.h>
 #include<stdio.h>
-#include<sys/socket.h>
 #include<stdlib.h>
-#include<netinet/in.h>
+#include<stdint.h>
 #include<string.h>
-#include<arpa/inet.h>
 #include<unistd.h>
+#include<errno.h>
 #include<sys/time.h>
 
-#define PORT 		(8800)
+#define Q_NAME 		("/my_queue")
+#define Q_SIZE		(8)
 #define LOG_FILE	("log.txt")
 
 enum led_state{LED_OFF, LED_ON};
@@ -77,61 +80,34 @@ void write_log(int IsFileCreated, int IsJustMessage, char *status, mesg_t *messa
 
 	fclose(log_file_ptr);
 }
-  
-int main(int argc, char const *argv[])
-{
-	int socket_FD = 0;
-	struct sockaddr_in address;
-	struct sockaddr_in serv_addr;
 
+int main()
+{
+	mqd_t msgqueue_FD;
 	char str[100];
+	int value;
+	struct mq_attr msgqueue_FD_attr;
+	msgqueue_FD_attr.mq_maxmsg = Q_SIZE;
+	msgqueue_FD_attr.mq_msgsize = sizeof(mesg_t);
 
 	mesg_t message;
 	mesg_t *msgptr;
 
-	socket_FD = socket(AF_INET, SOCK_STREAM, 0);
-	if (socket_FD < 0)
-    {
-       	perror("Error in creating socket");
-       	exit(EXIT_FAILURE);
-    }
-	else
-	{
-		printf("Socket created successfully\n");
-		sprintf(str,"client side socket fd = %d",socket_FD);
-		write_log(1,1,str,NULL);
+	msgqueue_FD = mq_open(Q_NAME, O_CREAT | O_RDWR, 0666, &msgqueue_FD_attr);		//open queue
 
+	if(msgqueue_FD == (mqd_t)-1)
+	{
+		perror("Error in opening Message Queue");
+		exit(1);
 	}
-  
-	memset(&serv_addr, '0', sizeof(serv_addr));
-  
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(PORT);
-      
-	// Convert IPv4 and IPv6 addresses from text to binary form
-	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) 
-	{
-        	perror("\nUnsupported Address\n");
-        	return -1;
-	}
-
-   	if (connect(socket_FD, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-   	{
-       	perror("Error in Connection");
-       	exit(EXIT_FAILURE);
-   	}
-	else
-	{
-        printf("\nConnection Successfull \n");
-                
-    }
-
+	sprintf(str,"Process-1 File Descriptor = %d",(int)msgqueue_FD);
+	write_log(1,1,str,NULL);
 
     int j = 0;
 
     for(j = 0 ; j < 10 ; j++)
-    {
-	   	sprintf(str, "%d %s %s %d %s",j+1 , messagelookup[j]," - from client ( PID = ",getpid(), ")");
+    {	
+	    sprintf(str, "%d %s %s %d %s",j+1 , messagelookup[j]," - from Process1 ( PID = ",getpid(), ")");
 		strcpy(message.string, str);
 		message.length = strlen(message.string);
 		if(j >= 1 && j < 9)
@@ -139,18 +115,28 @@ int main(int argc, char const *argv[])
 		else
 			message.led_control = LED_ON;
 
-	    send(socket_FD , (void *)&message , sizeof(mesg_t) , 0 );
+		msgptr = &message;
 
-	    msgptr = &message;
+		value = mq_send(msgqueue_FD, (char*)msgptr, sizeof(mesg_t),0);		//send message
+		if(value == -1)
+		{
+			perror("Error in sending message");
+			exit(1);
+		}
+		write_log(1,0,"Process-1 Sending",msgptr);
 
-	    write_log(1,0,"Client Sending",msgptr);
+		value = mq_receive(msgqueue_FD, (char*)msgptr, sizeof(mesg_t), 0);	//receive message
+		if(value == -1)
+		{
+			perror("Error while receiving");
+			exit(1);
+		}
 
-	    read( socket_FD , msgptr, sizeof(mesg_t));
-
-	    write_log(1,0,"Client Receiving",msgptr);
-	    printf("%s with led_control=%d\n",msgptr->string,msgptr->led_control);
+		write_log(1,0,"Process-1 Receving",msgptr);
+		printf("%s with led control=%d\n",msgptr->string, msgptr->led_control);
 	}
-    
-	return 0;
 
+	mq_close(msgqueue_FD);
+	mq_unlink(Q_NAME);								//close queue
+	return 0;
 }
