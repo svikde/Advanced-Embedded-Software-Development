@@ -50,7 +50,7 @@ int cpu_rep_exit = 0;
 
 FILE *log_file_ptr = NULL;
 
-void write_log(thread_t *requesting_thread, int IsKillClose)
+void write_log(thread_t *requesting_thread, int IsKillClose, char *killtype)
 {
 	pthread_mutex_lock(&resource_lock);
 
@@ -99,7 +99,7 @@ void write_log(thread_t *requesting_thread, int IsKillClose)
 	else
 	{
 		gettimeofday(&Now,NULL);
-		fprintf(log_file_ptr, "\nThread - %d Killed at %lu.%06lu\n\n", requesting_thread->id,Now.tv_sec,Now.tv_usec);
+		fprintf(log_file_ptr, "\nThread - %d Killed at %lu.%06lu - %s\n\n", requesting_thread->id,Now.tv_sec,Now.tv_usec,killtype);
 	}
 	fclose(log_file_ptr);
 
@@ -252,7 +252,7 @@ void _handler_kill_thread2(int signum)
 {
 	if((signum == SIGUSR1) || (signum == SIGUSR2))
 	{
-		printf("Hello\n");
+	//	printf("Hello\n");
 		child2_exit = 1;
 	}
 
@@ -262,11 +262,11 @@ void task(void *requesting_thread)
 {
 	thread_t * req_thread = (thread_t*) requesting_thread;
 	printf("\nTask Executed :)\n");
-	write_log(req_thread,0);
+	write_log(req_thread,0,"");
 	if(req_thread->id == 1)
 	{
 		process_characters(req_thread);
-		write_log(req_thread,1);
+		write_log(req_thread,1,"Normally");
 		pthread_exit(NULL);
 	}
 
@@ -300,7 +300,7 @@ void task(void *requesting_thread)
         {
         	if(cpu_rep_exit)
         	{
-        		write_log(req_thread,1);
+        		write_log(req_thread,1,"by SIGUSR1");
         		pthread_exit(NULL);
         	}
         }
@@ -362,7 +362,7 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	write_log(t_parent,0);
+	write_log(t_parent,0,"");
 
 	thread_status = pthread_create(&thread1,NULL,(void *)task, (void*) t_child1);
 	if(thread_status != 0)
@@ -383,7 +383,7 @@ int main(int argc, char* argv[])
 	pthread_join(thread1, NULL);
 	pthread_join(thread2, NULL);
 
-	write_log(t_parent,1);
+	write_log(t_parent,1,"Normally");
 
 	pthread_mutex_destroy(&resource_lock);
 
