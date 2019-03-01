@@ -11,6 +11,7 @@
 #include<sys/wait.h>
 #include<stdlib.h>
 #include<sys/time.h>
+#include<signal.h>
 
 #define SHRD_MEM 	("smemory")
 #define SEM_LOCK 	("semphr_lock")
@@ -84,6 +85,12 @@ void write_log(int IsFileCreated, int IsJustMessage, char *status, mesg_t *messa
 	fclose(log_file_ptr);
 }
 
+void _handler_kill(int signal)
+{
+	printf("Killed by Ctrl-C\n");
+	write_log(1,1,"Process-2 Killed by Ctrl-C",NULL);
+	exit(1);
+}
 
 int main()
 {
@@ -94,6 +101,12 @@ int main()
 	char str[100];
 
 	write_log(0,1,"IPC Method - Shared Memory (Starting)",msgptr);
+
+	struct sigaction kill_action;
+	memset (&kill_action, 0, sizeof (kill_action));
+	kill_action.sa_handler = &_handler_kill;
+	sigaction (SIGINT, &kill_action, NULL);
+
 
 	sharedmemory_FD = shm_open(SHRD_MEM, O_CREAT | O_RDWR, 0666);
 
@@ -154,5 +167,8 @@ int main()
 
 	close(sharedmemory_FD);
   	sem_unlink(SEM_LOCK);
+
+  	write_log(1,1,"Process-2 Killed Normally",NULL);
+
 	return 0;
 }

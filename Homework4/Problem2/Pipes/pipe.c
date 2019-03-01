@@ -9,6 +9,7 @@
 #include<sys/time.h>
 #include<pthread.h>
 #include<sys/wait.h>
+#include<signal.h>
 
 #define LOG_FILE	("log.txt")
 

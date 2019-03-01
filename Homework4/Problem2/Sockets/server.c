@@ -5,6 +5,7 @@
 #include<string.h>
 #include<unistd.h>
 #include<sys/time.h>
+#include<signal.h>
 
 #define	PORT		(8800)
 #define LOG_FILE	("log.txt")
@@ -77,6 +78,13 @@ void write_log(int IsFileCreated, int IsJustMessage, char *status, mesg_t *messa
 	fclose(log_file_ptr);
 }
 
+void _handler_kill(int signal)
+{
+	printf("Killed by Ctrl-C\n");
+	write_log(1,1,"Server process Killed by Ctrl-C",NULL);
+	exit(1);
+}
+
 int main()
 {
 	int server_FD, new_socket_FD;
@@ -91,7 +99,11 @@ int main()
 	
 	write_log(0,1,"IPC Method = Sockets (starting)",NULL);
 
-	/*Creating a socket file descriptor*/
+	struct sigaction kill_action;
+	memset (&kill_action, 0, sizeof (kill_action));
+	kill_action.sa_handler = &_handler_kill;
+	sigaction (SIGINT, &kill_action, NULL);
+
 	server_FD = socket(AF_INET, SOCK_STREAM, 0);
 	if(server_FD == 0)
 	{
@@ -160,6 +172,8 @@ int main()
 	   	send(new_socket_FD , (void *)&message , sizeof(mesg_t) , 0 );
 	   	write_log(1,0,"Server Sending",msgptr);
     }
+
+    write_log(1,1,"Server Process Killed Normally",NULL);
 
    	return 0;
 }

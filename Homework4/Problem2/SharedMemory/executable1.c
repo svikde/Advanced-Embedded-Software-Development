@@ -11,6 +11,7 @@
 #include<sys/types.h>
 #include<stdlib.h>
 #include<sys/time.h>
+#include<signal.h>
 
 #define SHRD_MEM 	("smemory")
 #define SEM_LOCK 	("semphr_lock")
@@ -84,6 +85,13 @@ void write_log(int IsFileCreated, int IsJustMessage, char *status, mesg_t *messa
 	fclose(log_file_ptr);
 }
 
+void _handler_kill(int signal)
+{
+	printf("Killed by Ctrl-C\n");
+	write_log(1,1,"Process-1 Killed by Ctrl-C",NULL);
+	exit(1);
+}
+
 int main()
 {
 	int sharedmemory_FD;
@@ -93,6 +101,11 @@ int main()
 	mesg_t message;
 	mesg_t *msgptr;
 	char str[100];
+
+	struct sigaction kill_action;
+	memset (&kill_action, 0, sizeof (kill_action));
+	kill_action.sa_handler = &_handler_kill;
+	sigaction (SIGINT, &kill_action, NULL);
 
 	sharedmemory_FD = shm_open(SHRD_MEM, O_CREAT | O_RDWR, 0666);
 	if(sharedmemory_FD < 0)
@@ -132,28 +145,28 @@ int main()
 
 	for(j =0 ;j< 10;j++)
 	{
-    sprintf(str, "%d %s %s %d %s",j+1 , messagelookup[j]," - from Process1 ( PID = ",getpid(), ")");
-	strcpy(message.string, str);
-	message.length = strlen(message.string);
-	if(j >= 1 && j < 9)
-		message.led_control = LED_OFF;
-	else
-		message.led_control = LED_ON;
+	    sprintf(str, "%d %s %s %d %s",j+1 , messagelookup[j]," - from Process1 ( PID = ",getpid(), ")");
+		strcpy(message.string, str);
+		message.length = strlen(message.string);
+		if(j >= 1 && j < 9)
+			message.led_control = LED_OFF;
+		else
+			message.led_control = LED_ON;
 
-	msgptr = &message;
+		msgptr = &message;
 
-    memcpy((char *)sharedmemory_map, (char *)msgptr, sharedmemory_size);
-    write_log(1,0,"Process-1 Sending",msgptr);
+	    memcpy((char *)sharedmemory_map, (char *)msgptr, sharedmemory_size);
+	    write_log(1,0,"Process-1 Sending",msgptr);
 
-    sem_post(semaphore_var);
+	    sem_post(semaphore_var);
 
-    sem_wait(semaphore_var2);
+	    sem_wait(semaphore_var2);
 
-    memcpy((char *)msgptr, (char *)sharedmemory_map, sharedmemory_size);
-    write_log(1,0,"Process-1 Receving",msgptr);
+	    memcpy((char *)msgptr, (char *)sharedmemory_map, sharedmemory_size);
+	    write_log(1,0,"Process-1 Receving",msgptr);
 
-	printf("%s with led control=%d\n",msgptr->string, msgptr->led_control);
-}
+		printf("%s with led control=%d\n",msgptr->string, msgptr->led_control);
+	}
 
 	truncation_res = shm_unlink(SHRD_MEM);
 	if(truncation_res < 0)
@@ -161,6 +174,8 @@ int main()
 		perror("Unlink error");
 		exit(1);
 	}
+
+	write_log(1,1,"Process-1 Killed Normally",NULL);
 
 	return 0;
 }

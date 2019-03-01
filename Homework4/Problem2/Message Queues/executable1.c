@@ -117,7 +117,7 @@ int main()
 
 		msgptr = &message;
 
-		value = mq_send(msgqueue_FD, (char*)msgptr, sizeof(mesg_t),0);		//send message
+		value = mq_send(msgqueue_FD, (char*)msgptr, sizeof(mesg_t),0);	
 		if(value == -1)
 		{
 			perror("Error in sending message");
@@ -125,7 +125,7 @@ int main()
 		}
 		write_log(1,0,"Process-1 Sending",msgptr);
 
-		value = mq_receive(msgqueue_FD, (char*)msgptr, sizeof(mesg_t), 0);	//receive message
+		value = mq_receive(msgqueue_FD, (char*)msgptr, sizeof(mesg_t), 0);	
 		if(value == -1)
 		{
 			perror("Error while receiving");
@@ -137,6 +137,9 @@ int main()
 	}
 
 	mq_close(msgqueue_FD);
-	mq_unlink(Q_NAME);								//close queue
+	mq_unlink(Q_NAME);
+
+	write_log(1,1,"Process-1 Killed Normally",NULL);
+									
 	return 0;
 }

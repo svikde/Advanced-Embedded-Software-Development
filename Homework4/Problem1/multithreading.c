@@ -47,6 +47,7 @@ struct itimerspec trigger;
 
 int child2_exit = 0;
 int cpu_rep_exit = 0;
+int kill_code = 0;
 
 FILE *log_file_ptr = NULL;
 
@@ -203,7 +204,7 @@ void report_cpu_utilization(union sigval sv)
 	if(signal == SIGVTALRM)
 		printf("\nHello\n");
 
-	cmd_ptr = popen("cat /proc/stat | head -n 4","r");
+	cmd_ptr = popen("cat /proc/stat | head -n 2","r");
 	if(cmd_ptr == NULL)
 	{
 		printf("\nChild - 2 failed to open pipe for /proc/stat (Read mode). Exiting\n");
@@ -250,9 +251,21 @@ void report_cpu_utilization(union sigval sv)
 
 void _handler_kill_thread2(int signum)
 {
-	if((signum == SIGUSR1) || (signum == SIGUSR2))
+	if(signum == SIGUSR1)
 	{
-	//	printf("Hello\n");
+		kill_code = 1;
+		child2_exit = 1;
+	}
+
+	if(signum == SIGUSR2)
+	{
+		kill_code = 2;
+		child2_exit = 1;
+	}
+
+	if(signum == SIGINT)
+	{
+		kill_code = 3;
 		child2_exit = 1;
 	}
 
@@ -294,13 +307,28 @@ void task(void *requesting_thread)
         timer_settime(timerid, 0, &trigger, NULL);
 
         sigaction (SIGUSR1, &kill_action2, NULL);
-     //   sigaction (SIGUSR2, &kill_action, NULL);
+        sigaction (SIGUSR2, &kill_action2, NULL);
+        sigaction (SIGINT, &kill_action2, NULL);
         
         while(1)
         {
         	if(cpu_rep_exit)
         	{
-        		write_log(req_thread,1,"by SIGUSR1");
+        		if(kill_code == 1)
+        		{
+        			write_log(req_thread,1,"by SIGUSR1");
+        			printf("Killed by SIGUSR1\n");
+        		}
+        		if(kill_code == 2)
+        		{
+        			write_log(req_thread,1,"by SIGUSR2");
+        			printf("Killed by SIGUSR2\n");
+        		}
+        		if(kill_code == 3)
+        		{
+        			write_log(req_thread,1,"by Ctrl-C");
+        			printf("Killed by Ctrl-C\n");
+        		}
         		pthread_exit(NULL);
         	}
         }

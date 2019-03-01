@@ -6,6 +6,7 @@
 #include<arpa/inet.h>
 #include<unistd.h>
 #include<sys/time.h>
+#include<signal.h>
 
 #define PORT 		(8800)
 #define LOG_FILE	("log.txt")
@@ -77,6 +78,13 @@ void write_log(int IsFileCreated, int IsJustMessage, char *status, mesg_t *messa
 
 	fclose(log_file_ptr);
 }
+
+void _handler_kill(int signal)
+{
+	printf("Killed by Ctrl-C\n");
+	write_log(1,1,"Client Process Killed by Ctrl-C",NULL);
+	exit(1);
+}
   
 int main(int argc, char const *argv[])
 {
@@ -88,6 +96,11 @@ int main(int argc, char const *argv[])
 
 	mesg_t message;
 	mesg_t *msgptr;
+
+	struct sigaction kill_action;
+	memset (&kill_action, 0, sizeof (kill_action));
+	kill_action.sa_handler = &_handler_kill;
+	sigaction (SIGINT, &kill_action, NULL);
 
 	socket_FD = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_FD < 0)
@@ -150,6 +163,8 @@ int main(int argc, char const *argv[])
 	    write_log(1,0,"Client Receiving",msgptr);
 	    printf("%s with led_control=%d\n",msgptr->string,msgptr->led_control);
 	}
+
+	write_log(1,1,"Client Process Killed Normally",NULL);
     
 	return 0;
 
