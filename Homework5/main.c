@@ -1,5 +1,5 @@
 /*****************************************************************************
- *   @File          logfreertos_demo.c
+ *   @File          main.c
  *   @Brief         Creates 3 tasks to gauge temperature through I2C bus,
  *                  blink led, log data using queues and send alert on
  *                  superflous rise of temperature.
