@@ -35,11 +35,6 @@ void _led_handler(void *pvParameters)
         GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, GPIO_PIN_0);
         GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_1, GPIO_PIN_1);
 
-        count++;
-        message.led.togglecount = count;
-        message.led.timestamp = xTaskGetTickCount();
-        xQueueSend(logger_queue, &message, 0);
-
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(50));
 
         GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, 0x0);
